@@ -90,7 +90,19 @@ def processAllFiles(pathToMemex):
         except:   
             tempLang = "eng" #default        
             print(tempLang)    
-        ocrPublication(pathToMemex, k, languages)   
+        ocrPublication(pathToMemex, k, languages)  
+
+
+#def processAllRecords(bibData):
+    #for k,v in bibData.items():
+        # 1. create folders, copy files
+       # functions.processBibRecord(memexPath, v)
+        # 2. OCR the file
+        #language = identifyLanguage(v, "eng")
+        #ocrPublication(memexPath, v["rCite"], language)
+#bibData = functions.loadBib(settings["bib_all"])
+#processAllRecords(bibData)
+ 
 
 processAllFiles(memexPath)
         
