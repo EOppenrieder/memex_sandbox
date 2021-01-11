@@ -17,8 +17,8 @@ language = settings["language_keys"]
 #min_Df_S = settings["min_df"]
 #max_Df_S = settings["max_df"]
 
-stopWFile = "Stopwords_German.txt"
-stopwordsList = open(stopWFile, "r", encoding="utf8").read().split("\n")
+#stopWFile = "Stopwords_German.txt"
+#stopwordsList = open(stopWFile, "r", encoding="utf8").read().split("\n")
 
 
 def generatetfidfvalues():
@@ -70,11 +70,11 @@ def generatetfidfvalues():
 
     filteredDic = {}
     filteredDic = functions.filterDic(tfidfTableDic, 0.08)
-    with open("tfidfTableDic_filtered3.txt", 'w', encoding='utf8') as f9:
+    with open("tfidfTableDic_filtered.txt", 'w', encoding='utf8') as f9:
         json.dump(filteredDic, f9, sort_keys=True, indent=4, ensure_ascii=False)    
     filteredDic = {}
     filteredDic = functions.filterDic(cosineTableDic, 0.18)    
-    with open("cosineTableDic_filtered3.txt", 'w', encoding='utf8') as f9:
+    with open("cosineTableDic_filtered.txt", 'w', encoding='utf8') as f9:
         json.dump(filteredDic, f9, sort_keys=True, indent=4, ensure_ascii=False)
         
         
