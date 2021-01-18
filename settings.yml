@@ -2,6 +2,7 @@
 
 # PATH TO MEMEX
 path_to_memex: ./_data/
+path_to_tfidf: ./_data
 
 # BIBLIOGRAPHICAL FILES
 bib_all: ./_bib/zotero_bibliography.bib
@@ -11,6 +12,7 @@ language_keys: ./_bib/bibtex_languages.yml
 # TEMPLATES AND CONTENT FILES FOR THE INTERFACE
 template_page: ./_misc/template_page.html
 template_index: ./_misc/template_index.html
+template_search: ./_misc/template_search.html
 content_index: ./_misc/content_index.html
 
 # GENERATED FILES AND EXTENSIONS

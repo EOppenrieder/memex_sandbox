@@ -168,3 +168,24 @@ def filterDic(dic, thold):
                     retDic[k][key] = val    #add value    
     return(retDic)
 
+def normalizingResults():
+    string = "Schrödinger"
+    stringModified = string.replace("ö", "\w{,2}")
+    return(stringModified)
+
+def loadMultiLingualStopWords(listOfLanguageCodes):
+    print("Loading stopwords...")
+    stopwords = []
+    pathToFiles = settings["stopwords"]
+    codes = json.load(open(os.path.join(pathToFiles, "languages.json")))
+
+    for l in listOfLanguageCodes:
+        with open(os.path.join(pathToFiles, codes[l]+".txt"), "r", encoding="utf8") as f1:
+            lang = f1.read().strip().split("\n")
+            stopwords.extend(lang)
+
+    stopwords = list(set(stopwords))
+    print("\tStopwords for: ", listOfLanguageCodes)
+    print("\tNumber of stopwords: %d" % len(stopwords))
+    #print(stopwords)
+    return(stopwords)
