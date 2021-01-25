@@ -146,5 +146,5 @@ def formatSearches(pathToMemex):
     toc = searchesTemplate.replace("@TABLECONTENTS@", "\n".join(toc))
     return(toc)
 
-#processAllEntries(memexPath)
+processAllEntries(memexPath)
 createIndex(memexPath)
