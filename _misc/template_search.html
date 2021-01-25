@@ -9,9 +9,25 @@
 <script type="text/javascript" src="../../_misc/index.js"></script>
 
 <!-- Activating Data Table Filtering -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css">
-<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="
+https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css
+">
+<script type="text/javascript" language="javascript" src="
+https://code.jquery.com/jquery-3.5.1.js
+"></script>
+<script type="text/javascript" language="javascript" src="
+https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js
+"></script>
+  
+<!--
+<script>
+    $(document).ready(function () {
+        $('#publications').DataTable({
+          "pageLength": 50
+        });
+    });
+</script>
+-->
 
 <script>
     $(document).ready(function () {
@@ -28,6 +44,12 @@
 <body>
 
 <div class="sidenavindex">
+  <!--
+  <a class="active" href="./contents.html">CONTENTS</a>
+  <a class="active" href="./searches.html">SEARCHES</a>
+  <a class="active" href="./keywords.html">KEYWORDS</a>
+  <a class="active" href="./indices.html">INDICES</a>
+  -->
 </div>
 
 <div class="maintext">
@@ -38,13 +60,9 @@
 
   <!-- TOPFILE -->
 
-  <h2>SEARCH RESULTS FOR: <i><div class="searchString">@SEARACHARGUMENT@</div></i></h2>
+  @MAINCONTENT@
 
-
-@buttons@
-
-
-<!-- BOTFILE -->
+  <!-- BOTFILE -->
 
 
 <!--INSERTADDITIONALELEMENTS-->

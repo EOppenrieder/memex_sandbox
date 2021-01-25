@@ -22,13 +22,13 @@ memexPath = settings["path_to_memex"]
   #      ocred = json.load(jsonData) #loads the OCRed data
    #     pNums = ocred.keys()
 
-ocrFiles = functions.dicOfRelevantFiles(memexPath, ".json")   
-citeKeys = list(ocrFiles.keys())
+#ocrFiles = functions.dicOfRelevantFiles(memexPath, ".json")   
+#citeKeys = list(ocrFiles.keys())
 
 
-savePath =  os.path.join(memexPath,"wordcloud" + ".jpg")
+#savePath =  os.path.join(memexPath,"wordcloud" + ".jpg")
 
-tfIdfDic = json.load(open("C:\\Users\\elias\\memex_sandbox\\tfidfTableDic_filtered.txt", "r", encoding = "utf8"))
+#tfIdfDic = json.load(open("C:\\Users\\elias\\memex_sandbox\\tfidfTableDic_filtered.txt", "r", encoding = "utf8"))
 #print(tfidfDic)
 def createWordCloud(savePath, tfIdfDic):
     wc = WordCloud(width=1000, height=600, background_color="white", random_state=2,
@@ -39,8 +39,18 @@ def createWordCloud(savePath, tfIdfDic):
     plt.axis("off")
     plt.show() # this line will show the plot
     plt.savefig(savePath, dpi=200, bbox_inches='tight')
+    
+def createAll(filename):
+    docData = json.load(open(filename, "r", encoding="utf8"))
 
-createWordCloud(savePath, tfIdfDic)
+    for k, v in docData.items():
+        savePath = functions.generatePublPath(memexPath, k)
+        savePath = savePath + "\\" + k
+        if v:
+            createWordCloud(savePath, v)
+
+createAll("tfidfTableDic_filtered.txt")
+
 
 #def createWordCloud(savePath, tfIdfDic):
     #tfIdfDic = "tfidfTableDic_filtered_refined.txt"

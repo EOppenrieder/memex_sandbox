@@ -3,6 +3,7 @@
 # PATH TO MEMEX
 path_to_memex: ./_data/
 path_to_tfidf: ./_data
+path_to_results: ./_data/searches/
 
 # BIBLIOGRAPHICAL FILES
 bib_all: ./_bib/zotero_bibliography.bib
