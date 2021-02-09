@@ -5,8 +5,8 @@ import pdf2image, pytesseract
 import PyPDF2  
 import yaml, re, sys
 import shutil
-import generate
-import bibText
+from datetime import datetime
+
 
 settingsFile = "./settings.yml"
 settings = yaml.load(open(settingsFile), Loader = yaml.FullLoader)
@@ -74,27 +74,6 @@ def loadBib(bibTexFile):
     #print("="*80)
     return(bibDic)
 
-
-#def processBibRecord(pathToMemex, bibRecDict):
-   # tempPath = generatePublPath(pathToMemex, bibRecDict["rCite"])
-
-   # print("="*80)
-    #print("%s :: %s" % (bibRecDict["rCite"], tempPath))
-    #print("="*80)
-
-    #if not os.path.exists(tempPath):
-     #   os.makedirs(tempPath)
-
-      #  bibFilePath = os.path.join(tempPath, "%s.bib" % bibRecDict["rCite"])
-       # with open(bibFilePath, "w", encoding="utf8") as f9:
-        #    f9.write(bibRecDict["complete"])
-
-        #pdfFileSRC = bibRecDict["file"]
-        #pdfFileSRC = pdfFileSRC.replace ("\\:", ":")
-        #pdfFileDST = os.path.join(tempPath, "%s.pdf" % bibRecDict["rCite"])
-        #if not os.path.isfile(pdfFileDST): # this is to avoid copying that had been already copied.
-         #   shutil.copyfile(pdfFileSRC, pdfFileDST)
-
 def processBibRecord(pathToMemex, bibRecDict):
     tempPath = generatePublPath(pathToMemex, bibRecDict["rCite"])
 
@@ -108,46 +87,14 @@ def processBibRecord(pathToMemex, bibRecDict):
         bibFilePath = os.path.join(tempPath, "%s.bib" % bibRecDict["rCite"])
         with open(bibFilePath, "w", encoding="utf8") as f9:
             f9.write(bibRecDict["complete"])
-
-        pdfFileSRC = bibRecDict["file"]
-        pdfFileSRC = pdfFileSRC.replace ("\\:", ":")
-        pdfFileDST = os.path.join(tempPath, "%s.pdf" % bibRecDict["rCite"])
-        if not os.path.isfile(pdfFileDST): # this is to avoid copying that had been already copied.
-            shutil.copyfile(pdfFileSRC, pdfFileDST)
-
-    return bibRecDict["rCite"]
-
- #   def generatePageLinks(pNumList):
-  #  listMod = ["DETAILS"]
-   # listMod.extend(pNumList)
-
-   # toc = []
-  #  for l in listMod:
-   #     toc.append('<a href="%s.html">%s</a>' % (l, l))
-   # toc = " ".join(toc)
-
-   # pageDic = {}
-   # for l in listMod:
-    #    pageDic[l] = toc.replace('>%s<' % l, ' style="color: red;">%s<' % l)
-
-   # return(pageDic)
-
- #   def prettifyBib(bibText):
- #   bibText = bibText.replace("{{", "").replace("}}", "")
-  #  bibText = re.sub(r"\n\s+file = [^\n]+", "", bibText)
-   # bibText = re.sub(r"\n\s+abstract = [^\n]+", "", bibText)
-    #return(bibText)
-
-  #  def dicOfRelevantFiles(pathToMemex, extension):
-  #  dic = {}
-    # for subdir, dirs, files in os.walk(pathToMemex):
-     #   for file in files:
-            # process publication tf data
-      #      if file.endswith(extension):
-       #         key = file.replace(extension, "")
-        #        value = os.path.join(subdir, file)
-         #       dic[key] = value
-   # return(dic)
+        if "file" in bibRecDict:
+            pdfFileSRC = bibRecDict["file"]
+            pdfFileSRC = pdfFileSRC.replace ("\\:", ":")
+            pdfFileDST = os.path.join(tempPath, "%s.pdf" % bibRecDict["rCite"])
+            if not os.path.isfile(pdfFileDST): # this is to avoid copying that had been already copied.
+                os.rename(pdfFileSRC, pdfFileDST)
+        else:
+            print("\trecord has no PDF!")
 
 def dicOfRelevantFiles(pathToMemex, extension):
     dic = {}
@@ -169,11 +116,6 @@ def filterDic(dic, thold):
                 if k != key:        #check to not match the publication with itself
                     retDic[k][key] = val    #add value    
     return(retDic)
-
-def normalizingResults():
-    string = "Schrödinger"
-    stringModified = string.replace("ö", "\w{,2}")
-    return(stringModified)
 
 def removeFilesOfType(pathToMemex, fileExtension):
     if fileExtension in [".pdf", ".bib"]:
@@ -208,12 +150,14 @@ def generatePublicationInterface(citeKey, pathToBibFile):
     print("="*80)
     print(citeKey)
 
+    import functions
+
     jsonFile = pathToBibFile.replace(".bib", ".json")
     with open(jsonFile, encoding="utf8") as jsonData:
         ocred = json.load(jsonData)
         pNums = ocred.keys()
 
-        pageDic = generate.generatePageLinks(pNums)
+        pageDic = functions.generatePageLinks(pNums)
 
         # load page template
         with open(settings["template_page"], "r", encoding="utf8") as ft:
@@ -222,7 +166,7 @@ def generatePublicationInterface(citeKey, pathToBibFile):
         # load individual bib record
         bibFile = pathToBibFile
         bibDic = loadBib(bibFile)
-        bibForHTML = bibText.prettifyBib(bibDic[citeKey]["complete"])
+        bibForHTML = functions.prettifyBib(bibDic[citeKey]["complete"])
 
         orderedPages = list(pageDic.keys())
 
@@ -267,4 +211,85 @@ def generatePublicationInterface(citeKey, pathToBibFile):
             pagePath = os.path.join(pathToBibFile.replace(citeKey+".bib", ""), "pages", "%s.html" % k)
             with open(pagePath, "w", encoding="utf8") as f9:
                 f9.write(pageTemp)
+
+def listOfRelevantFiles(pathToMemex, extension):
+    listOfPaths = []
+    for subdir, dirs, files in os.walk(pathToMemex):
+        for file in files:
+            # process publication tf data
+            if file.endswith(extension):
+                path = os.path.join(subdir, file)
+                listOfPaths.append(listOfPaths)
+    return(listOfPaths)
+
+
+def memexStatusUpdates(pathToMemex, fileType):
+    # collect stats
+    NumberOfPublications = len(listOfRelevantFiles(pathToMemex, ".pdf")) # PDF is the main measuring stick
+    NumberOfCountedItems = len(listOfRelevantFiles(pathToMemex, fileType))
+
+    currentTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    # check if dictionary exists
+    dicFile = os.path.join(pathToMemex, "memex.status")
+    if os.path.isfile(dicFile):
+        dic = json.load(open(dicFile))
+    else:
+        dic = {}
+
+    dic[fileType] = {}
+    dic[fileType]["files"] = NumberOfCountedItems
+    dic[fileType]["pdfs"] = NumberOfPublications
+    dic[fileType]["time"] = currentTime
+
+    # save dic
+    with open(dicFile, 'w', encoding='utf8') as f9:
+        json.dump(dic, f9, sort_keys=True, indent=4, ensure_ascii=False)
+
+    print("="*40)
+    print("Memex Stats have been updated for: %s" % fileType)
+    print("="*40)
+
+
+#langKeysFile = "./_bib/language_keys.yml"
+langKeys = yaml.load(open(settings["language_keys"]), Loader=yaml.FullLoader)
+
+def identifyLanguage(bibRecDict, fallBackLanguage):
+    if "language" in bibRecDict:
+        try:
+            language = langKeys[bibRecDict["language"]]
+            message = "\t>> Language has been successfuly identified: %s" % language
+        except:
+            message = "\t>> Language ID `%s` cannot be understood by Tesseract; fix it and retry\n" % bibRecDict["language"]
+            message += "\t>> For now, trying `%s`..." % fallBackLanguage
+            language = fallBackLanguage
+    else:
+        message = "\t>> No data on the language of the publication"
+        message += "\t>> For now, trying `%s`..." % fallBackLanguage
+        language = fallBackLanguage
+    print(message)
+    return(language)
+
+
+def generatePageLinks(pNumList):
+    listMod = ["DETAILS"]
+    listMod.extend(pNumList)
+
+    toc = []
+    for l in listMod:
+        toc.append('<a href="%s.html">%s</a>' % (l, l))
+    toc = " ".join(toc)
+
+    pageDic = {}
+    for l in listMod:
+        pageDic[l] = toc.replace('>%s<' % l, ' style="color: red;">%s<' % l)
+
+    return(pageDic)
+
+
+def prettifyBib(bibText):
+    bibText = bibText.replace("{{", "").replace("}}", "")
+    bibText = re.sub(r"\n\s+file = [^\n]+", "", bibText)
+    bibText = re.sub(r"\n\s+abstract = [^\n]+", "", bibText)
+    return(bibText)
 

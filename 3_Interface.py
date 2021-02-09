@@ -1,17 +1,17 @@
-import os, json
+import os, json, yaml
 
 # SCRIPT WITH OUR PREVIOUS FUNCTIONS
 import functions
-import LoadYml
-import generate
-import bibText
-import dic
+#import LoadYml
+
 
 ###########################################################
 # VARIABLES ###############################################
 ###########################################################
 
-settings = LoadYml.loadYmlSettings("settings.yml")
+settingsFile = "settings.yml"
+settings = yaml.safe_load(open(settingsFile))
+memexPath = settings["path_to_memex"]
 
 ###########################################################
 # FUNCTIONS ###############################################
@@ -27,7 +27,7 @@ def generatePublicationInterface(citeKey, pathToBibFile):
         ocred = json.load(jsonData)
         pNums = ocred.keys()
 
-        pageDic = generate.generatePageLinks(pNums)
+        pageDic = functions.generatePageLinks(pNums)
 
         # load page template
         with open(settings["template_page"], "r", encoding="utf8") as ft:
@@ -36,7 +36,7 @@ def generatePublicationInterface(citeKey, pathToBibFile):
         # load individual bib record
         bibFile = pathToBibFile
         bibDic = functions.loadBib(bibFile)
-        bibForHTML = bibText.prettifyBib(bibDic[citeKey]["complete"])
+        bibForHTML = functions.prettifyBib(bibDic[citeKey]["complete"])
 
         orderedPages = list(pageDic.keys())
 
@@ -144,7 +144,7 @@ def generateMemexStartingPages(pathToMemex):
 # FUNCTIONS TESTING #######################################
 ###########################################################
 
-#generatePublicationInterface("AshkenaziHoly2014", "./_memex_sandbox/_data/a/as/AshkenaziHoly2014/AshkenaziHoly2014.bib")
+#generatePublicationInterface("laqua_pacifism_2014", ".\\memex_sandbox\\_data\\l\\la\\laqua_pacifism_2014\\laqua_pacifism_2014.bib")
 
 ###########################################################
 # PROCESS ALL RECORDS: ANOTHER APPROACH ###################
@@ -155,7 +155,7 @@ def generateMemexStartingPages(pathToMemex):
 # approach that will be more flexible.
 
 def processAllRecords(pathToMemex):
-    files = dic.dicOfRelevantFiles(pathToMemex, ".bib")
+    files = functions.dicOfRelevantFiles(pathToMemex, ".bib")
     for citeKey, pathToBibFile in files.items():
         #print(citeKey)
         generatePublicationInterface(citeKey, pathToBibFile)

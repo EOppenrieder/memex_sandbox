@@ -66,11 +66,14 @@ def searchOCRresults(pathToResults, searchString):
 # RUN THE MAIN CODE #######################################
 ###########################################################
 
-searchPhrase  = r"emperor"
-#searchPhrase  = r"corpus\W*driven"
-#searchPhrase  = r"multi\W*verse"
-#searchPhrase  = r"text does ?n[o\W]t exist"
-#searchPhrase  = r"corpus-?based"
+#searchPhrase  = r"emperor"
+#searchPhrase  = r"bohemia"
+#searchPhrase  = r"congress"
+#searchPhrase  = r"pentarchy"
+#searchPhrase  = r"ring"
+#searchPhrase = r"galician?"
+searchPhrase = r"palack[y|ý]s?"
+#searchPhrase = r"cisleithanien"
 
 searchOCRresults(settings["path_to_results"], searchPhrase)
 #exec(open("9_Interface_IndexPage.py").read())

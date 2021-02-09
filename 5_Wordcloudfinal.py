@@ -85,8 +85,8 @@ def generateTfIdfWordClouds(pathToMemex):
 
     # PART 2: calculate tfidf for all loaded publications and distances
     print("\tgenerating tfidf matrix & distances...")
-
-    vectorizer = CountVectorizer(ngram_range=(1,1), min_df=2, max_df=0.5)
+    stopWords = functions.loadMultiLingualStopWords(["deu", "eng", "fre"])
+    vectorizer = CountVectorizer(ngram_range=(1,1), min_df=2, max_df=0.5, stop_words = stopWords) 
     countVectorized = vectorizer.fit_transform(docList)
     tfidfTransformer = TfidfTransformer(smooth_idf=True, use_idf=True)
     vectorized = tfidfTransformer.fit_transform(countVectorized) # generates a sparse matrix
@@ -95,7 +95,7 @@ def generateTfIdfWordClouds(pathToMemex):
     tfidfTable = pd.DataFrame(vectorized.toarray(), index=docIdList, columns=vectorizer.get_feature_names())
     tfidfTable = tfidfTable.transpose()
     tfidfTableDic = tfidfTable.to_dict()
-    tfidfTableDic = filterTfidfDictionary(tfidfTableDic, 0.02, "more")
+    tfidfTableDic = filterTfidfDictionary(tfidfTableDic, 0.03, "more")
     
 
     #tfidfTableDic = json.load(open("/Users/romanovienna/Dropbox/6.Teaching_New/BUILDING_MEMEX_COURSE/_memex_sandbox/_data/results_tfidf_publications.dataJson"))
@@ -105,7 +105,7 @@ def generateTfIdfWordClouds(pathToMemex):
     wc = WordCloud(width=1000, height=600, background_color="white", random_state=2,
                 relative_scaling=0.5, #color_func=lambda *args, **kwargs: (179,0,0)) # single color
                 #colormap="copper") # Oranges, Reds, YlOrBr, YlOrRd, OrRd; # copper
-                colormap="gray") # binary, gray
+                colormap="autumn") # binary, gray
                 # https://matplotlib.org/3.1.1/gallery/color/colormap_reference.html
 
     counter = len(tfidfTableDic)
@@ -143,7 +143,7 @@ def generateTfIdfWordClouds(pathToMemex):
 
 print("""
 ============= GENERATING WORDCLOUDS ===============
-   Type "YES", if you want to regenerate new files;
+  Type "YES", if you want to regenerate new files;
 Old files will be deleted and new ones regenerated;
 Press `Enter` to continue generating missing files.
 ===================================================
